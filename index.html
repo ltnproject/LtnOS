@@ -1,0 +1,996 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LtnOS - Lightning Fast Operating System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Rajdhani:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #00ff9d;
+            --secondary: #0066ff;
+            --dark: #0a0e1a;
+            --darker: #050810;
+            --accent: #ff00ff;
+            --text: #e0e6f0;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            background: var(--darker);
+            color: var(--text);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+        
+        /* Animated Background */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            opacity: 0.4;
+        }
+        
+        .grid-bg {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(var(--primary) 1px, transparent 1px),
+                linear-gradient(90deg, var(--primary) 1px, transparent 1px);
+            background-size: 50px 50px;
+            opacity: 0.1;
+            animation: gridMove 20s linear infinite;
+        }
+        
+        @keyframes gridMove {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(50px, 50px); }
+        }
+        
+        .glow-orbs {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            animation: float 8s ease-in-out infinite;
+        }
+        
+        .orb-1 {
+            width: 400px;
+            height: 400px;
+            background: var(--primary);
+            top: 10%;
+            left: 20%;
+            animation-delay: 0s;
+        }
+        
+        .orb-2 {
+            width: 300px;
+            height: 300px;
+            background: var(--secondary);
+            bottom: 20%;
+            right: 15%;
+            animation-delay: 2s;
+        }
+        
+        .orb-3 {
+            width: 250px;
+            height: 250px;
+            background: var(--accent);
+            top: 50%;
+            left: 60%;
+            animation-delay: 4s;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(30px, -30px) scale(1.1); }
+        }
+        
+        /* Content Container */
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 40px;
+        }
+        
+        /* Header */
+        header {
+            padding: 30px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            animation: fadeInDown 1s ease-out;
+        }
+        
+        .logo {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 3px;
+            text-shadow: 0 0 30px var(--primary);
+        }
+        
+        nav {
+            display: flex;
+            gap: 40px;
+        }
+        
+        nav a {
+            color: var(--text);
+            text-decoration: none;
+            font-size: 1.1rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            position: relative;
+            transition: color 0.3s;
+        }
+        
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary);
+            transition: width 0.3s;
+        }
+        
+        nav a:hover {
+            color: var(--primary);
+        }
+        
+        nav a:hover::after {
+            width: 100%;
+        }
+        
+        /* Hero Section */
+        .hero {
+            padding: 120px 0;
+            text-align: center;
+            animation: fadeInUp 1s ease-out 0.3s backwards;
+        }
+        
+        .hero h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 6rem;
+            font-weight: 900;
+            margin-bottom: 30px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 60px rgba(0, 255, 157, 0.5);
+            letter-spacing: 5px;
+            line-height: 1.1;
+        }
+        
+        .hero .tagline {
+            font-size: 1.8rem;
+            color: var(--text);
+            margin-bottom: 50px;
+            font-weight: 300;
+            letter-spacing: 2px;
+        }
+        
+        .version-badge {
+            display: inline-block;
+            padding: 12px 30px;
+            background: rgba(0, 255, 157, 0.1);
+            border: 1px solid var(--primary);
+            border-radius: 50px;
+            color: var(--primary);
+            font-size: 1.1rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            margin-bottom: 30px;
+        }
+        
+        .install-info {
+            max-width: 700px;
+            margin: 0 auto 40px;
+            padding: 20px 35px;
+            background: linear-gradient(135deg, rgba(0, 102, 255, 0.15), rgba(0, 255, 157, 0.15));
+            border: 2px solid rgba(0, 102, 255, 0.4);
+            border-radius: 15px;
+            font-size: 1.15rem;
+            line-height: 1.7;
+            color: var(--text);
+        }
+        
+        .install-info strong {
+            color: var(--secondary);
+            font-size: 1.25rem;
+            display: block;
+            margin-bottom: 5px;
+        }
+        
+        .cta-buttons {
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+            margin-top: 50px;
+        }
+        
+        .btn {
+            padding: 18px 45px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            letter-spacing: 1px;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: var(--dark);
+            box-shadow: 0 0 30px rgba(0, 255, 157, 0.5);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 40px rgba(0, 255, 157, 0.7);
+        }
+        
+        .btn-secondary {
+            background: transparent;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+        }
+        
+        .btn-secondary:hover {
+            background: var(--primary);
+            color: var(--dark);
+            transform: translateY(-3px);
+        }
+        
+        /* Features Section */
+        .features {
+            padding: 100px 0;
+            animation: fadeInUp 1s ease-out 0.6s backwards;
+        }
+        
+        .section-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3.5rem;
+            text-align: center;
+            margin-bottom: 80px;
+            color: var(--primary);
+            letter-spacing: 3px;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 40px;
+        }
+        
+        .feature-card {
+            background: rgba(10, 14, 26, 0.6);
+            border: 1px solid rgba(0, 255, 157, 0.2);
+            border-radius: 15px;
+            padding: 40px;
+            transition: all 0.4s;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(0, 255, 157, 0.1), rgba(0, 102, 255, 0.1));
+            opacity: 0;
+            transition: opacity 0.4s;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--primary);
+            box-shadow: 0 20px 50px rgba(0, 255, 157, 0.3);
+        }
+        
+        .feature-card:hover::before {
+            opacity: 1;
+        }
+        
+        .feature-icon {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            position: relative;
+        }
+        
+        .feature-card h3 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+            color: var(--primary);
+            position: relative;
+        }
+        
+        .feature-card p {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: rgba(224, 230, 240, 0.8);
+            position: relative;
+        }
+        
+        /* Stats Section */
+        .stats {
+            padding: 100px 0;
+            text-align: center;
+            animation: fadeInUp 1s ease-out 0.9s backwards;
+        }
+        
+        /* Download Section */
+        .download-section {
+            padding: 100px 0;
+            animation: fadeInUp 1s ease-out 1.2s backwards;
+        }
+        
+        .download-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 40px;
+            margin-bottom: 80px;
+        }
+        
+        .download-card {
+            background: rgba(10, 14, 26, 0.8);
+            border: 2px solid rgba(0, 255, 157, 0.3);
+            border-radius: 20px;
+            padding: 40px;
+            transition: all 0.4s;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .download-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(0, 255, 157, 0.05), rgba(0, 102, 255, 0.05));
+            opacity: 0;
+            transition: opacity 0.4s;
+        }
+        
+        .download-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--primary);
+            box-shadow: 0 20px 60px rgba(0, 255, 157, 0.4);
+        }
+        
+        .download-card:hover::before {
+            opacity: 1;
+        }
+        
+        .download-card.featured {
+            border-color: var(--primary);
+            box-shadow: 0 10px 40px rgba(0, 255, 157, 0.3);
+        }
+        
+        .featured-badge {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: var(--primary);
+            color: var(--dark);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+        
+        .edition-badge {
+            display: inline-block;
+            background: rgba(0, 102, 255, 0.2);
+            color: var(--secondary);
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            position: relative;
+        }
+        
+        .download-card h3 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 15px;
+            position: relative;
+        }
+        
+        .edition-desc {
+            font-size: 1.1rem;
+            color: rgba(224, 230, 240, 0.8);
+            margin-bottom: 30px;
+            line-height: 1.7;
+            position: relative;
+        }
+        
+        .edition-specs {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 30px;
+            position: relative;
+        }
+        
+        .spec-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(0, 255, 157, 0.1);
+        }
+        
+        .spec-item:last-child {
+            border-bottom: none;
+        }
+        
+        .spec-label {
+            color: rgba(224, 230, 240, 0.6);
+            font-weight: 600;
+        }
+        
+        .spec-value {
+            color: var(--primary);
+            font-weight: 600;
+        }
+        
+        .download-btn {
+            display: block;
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: var(--dark);
+            text-align: center;
+            text-decoration: none;
+            border-radius: 10px;
+            font-size: 1.15rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            transition: all 0.3s;
+            position: relative;
+            box-shadow: 0 5px 20px rgba(0, 255, 157, 0.3);
+        }
+        
+        .download-btn span {
+            font-size: 1.3rem;
+            margin-right: 8px;
+        }
+        
+        .download-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 255, 157, 0.5);
+        }
+        
+        .checksum {
+            margin-top: 15px;
+            font-size: 0.85rem;
+            color: rgba(224, 230, 240, 0.5);
+            font-family: 'Courier New', monospace;
+            word-break: break-all;
+            position: relative;
+        }
+        
+        .system-requirements {
+            background: rgba(10, 14, 26, 0.6);
+            border: 1px solid rgba(0, 255, 157, 0.2);
+            border-radius: 20px;
+            padding: 50px;
+            margin-top: 60px;
+        }
+        
+        .system-requirements h3 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.2rem;
+            color: var(--primary);
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .req-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+        }
+        
+        .req-item {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 3px solid var(--primary);
+            font-size: 1.05rem;
+            line-height: 1.6;
+        }
+        
+        .req-item strong {
+            color: var(--primary);
+            display: block;
+            margin-bottom: 8px;
+            font-size: 1.1rem;
+        }
+        
+        .tech-foundation {
+            background: rgba(10, 14, 26, 0.6);
+            border: 1px solid rgba(0, 102, 255, 0.3);
+            border-radius: 20px;
+            padding: 50px;
+            margin-top: 60px;
+        }
+        
+        .tech-foundation h3 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.2rem;
+            color: var(--secondary);
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+        }
+        
+        .tech-item {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 30px;
+            border-radius: 15px;
+            border: 1px solid rgba(0, 102, 255, 0.2);
+            text-align: center;
+            transition: all 0.3s;
+        }
+        
+        .tech-item:hover {
+            border-color: var(--secondary);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 102, 255, 0.3);
+        }
+        
+        .tech-logo {
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+        
+        .tech-item h4 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.4rem;
+            color: var(--secondary);
+            margin-bottom: 12px;
+        }
+        
+        .tech-item p {
+            font-size: 1rem;
+            color: rgba(224, 230, 240, 0.8);
+            line-height: 1.6;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 50px;
+            margin-top: 60px;
+        }
+        
+        .stat-item {
+            position: relative;
+        }
+        
+        .stat-number {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 4rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+        
+        .stat-label {
+            font-size: 1.3rem;
+            color: var(--text);
+            letter-spacing: 1px;
+        }
+        
+        /* Footer */
+        footer {
+            padding: 80px 0 40px;
+            border-top: 1px solid rgba(0, 255, 157, 0.2);
+            margin-top: 100px;
+        }
+        
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 50px;
+            margin-bottom: 50px;
+        }
+        
+        .footer-section h4 {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--primary);
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+        }
+        
+        .footer-section ul {
+            list-style: none;
+        }
+        
+        .footer-section li {
+            margin-bottom: 12px;
+        }
+        
+        .footer-section a {
+            color: rgba(224, 230, 240, 0.7);
+            text-decoration: none;
+            font-size: 1rem;
+            transition: color 0.3s;
+        }
+        
+        .footer-section a:hover {
+            color: var(--primary);
+        }
+        
+        .footer-bottom {
+            text-align: center;
+            padding-top: 30px;
+            border-top: 1px solid rgba(0, 255, 157, 0.1);
+        }
+
+        footer p {
+            color: rgba(224, 230, 240, 0.6);
+            font-size: 0.95rem;
+        }
+        
+        /* Animations */
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 3.5rem;
+            }
+            
+            .hero .tagline {
+                font-size: 1.3rem;
+            }
+            
+            .version-badge {
+                font-size: 0.95rem;
+                padding: 10px 20px;
+            }
+            
+            .cta-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .features-grid,
+            .download-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .system-requirements,
+            .tech-foundation {
+                padding: 30px;
+            }
+            
+            .req-grid,
+            .tech-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .footer-content {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+            
+            nav {
+                flex-direction: column;
+                gap: 20px;
+            }
+            
+            header {
+                flex-direction: column;
+                gap: 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated Background -->
+    <div class="bg-animation">
+        <div class="grid-bg"></div>
+        <div class="glow-orbs">
+            <div class="orb orb-1"></div>
+            <div class="orb orb-2"></div>
+            <div class="orb orb-3"></div>
+        </div>
+    </div>
+
+    <!-- Content -->
+    <div class="container">
+        <!-- Header -->
+        <header>
+            <div class="logo">LtnOS</div>
+            <nav>
+                <a href="#features">Features</a>
+                <a href="#about">About</a>
+                <a href="#download">Download</a>
+                <a href="https://ltnproject.github.io/LtnOSDoc">Docs</a>
+            </nav>
+        </header>
+
+        <!-- Hero Section -->
+        <section class="hero">
+            <h1>LtnOS</h1>
+            <p class="tagline">Arch Linux Powered. GNOME Refined.</p>
+            <p class="tagline">Fast. Secure. Open Source.</p>
+            <div class="version-badge">Current Release: LtnOS 1.0 Nebula (Stable)</div>
+            <div class="install-info">
+                <strong>Installing Arch Made Easy</strong> — Forget the old complicated ways. LtnOS comes with a streamlined graphical installer. No more archinstall headaches!
+            </div>
+            <div class="cta-buttons">
+                <a href="#download" class="btn btn-primary">Download LtnOS</a>
+                <a href="#features" class="btn btn-secondary">Learn More</a>
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section class="features" id="features">
+            <h2 class="section-title">Why Choose LtnOS?</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🚀</div>
+                    <h3>Easy Installation</h3>
+                    <p>Say goodbye to complex installation procedures. LtnOS features a beautiful graphical installer that guides you through setup in minutes. No terminal commands required!</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🏗️</div>
+                    <h3>Built on Arch Linux</h3>
+                    <p>Leverage the power and flexibility of Arch Linux with rolling releases, the AUR, and pacman package manager. Get the latest software without waiting for release cycles.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🎨</div>
+                    <h3>Beautiful GNOME Desktop</h3>
+                    <p>Experience a refined, customized GNOME desktop environment with carefully selected extensions, themes, and workflows optimized for productivity and aesthetics.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">⚡</div>
+                    <h3>Performance Optimized</h3>
+                    <p>Pre-configured kernel parameters, swap optimization, and system tweaks ensure maximum performance. Boot in seconds and enjoy a snappy, responsive system.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📦</div>
+                    <h3>Curated Software Selection</h3>
+                    <p>Essential applications pre-installed and configured. Access to Arch repositories, AUR, and Flatpak for the largest software collection available.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🛠️</div>
+                    <h3>Developer Ready</h3>
+                    <p>Pre-configured development environment with essential tools, compilers, and libraries. Perfect for programmers who want to start coding immediately.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Download Section -->
+        <section class="download-section" id="download">
+            <h2 class="section-title">Download LtnOS 1.0 Nebula</h2>
+            <p style="text-align: center; font-size: 1.2rem; color: var(--text); margin-bottom: 60px; max-width: 800px; margin-left: auto; margin-right: auto;">
+                Choose the edition that best fits your needs. Both editions feature our easy graphical installer and are based on Arch Linux with GNOME Desktop. Completely free and open source.
+            </p>
+            <div class="download-grid">
+                <div class="download-card">
+                    <div class="edition-badge">Light Edition - Working on it..</div>
+                    <h3>LtnOS Desktop</h3>
+                    <p class="edition-desc">I know that you might think 9.6GB for an ISO is a lot, that's why I decided to work on a Light Version of it. :D</p>
+                    <div class="edition-specs">
+                        <div class="spec-item">
+                            <span class="spec-label">Base:</span>
+                            <span class="spec-value">Arch Linux</span>
+                        </div>
+                        <div class="spec-item">
+                            <span class="spec-label">Desktop:</span>
+                            <span class="spec-value">-</span>
+                        </div>
+                        <div class="spec-item">
+                            <span class="spec-label">Installer:</span>
+                            <span class="spec-value">Graphical</span>
+                        </div>
+                        <div class="spec-item">
+                            <span class="spec-label">Size:</span>
+                            <span class="spec-value">-</span>
+                        </div>
+                        <div class="spec-item">
+                            <span class="spec-label">Format:</span>
+                            <span class="spec-value">ISO</span>
+                        </div>
+                        <div class="spec-item">
+                            <span class="spec-label">Architecture:</span>
+                            <span class="spec-value">x86_64</span>
+                        </div>
+                    </div>
+                    <a href="#" class="download-btn" onclick="alert('Download would start: ltnos-1.0-nebula-desktop-x86_64.iso'); return false;">
+                        <span>⬇</span> Download Desktop Edition
+                    </a>
+                    <div class="checksum">SHA256: -</div>
+                </div>
+
+                <div class="download-card featured">
+                    <div class="featured-badge">RECOMMENDED</div>
+                    <div class="edition-badge">Standard Edition</div>
+                    <h3>LtnOS Standard</h3>
+                    <p class="edition-desc">The complete LtnOS experience with GNOME 47, development tools, AUR helper (yay), and premium GNOME extensions. Perfect for power users and developers.</p>
+                    <div class="edition-specs">
+                        <div class="spec-item">
+                            <span class="spec-label">Base:</span>
+                            <span class="spec-value">Arch Linux</span>
+                        </div>
+                        <div class="spec-item">
+                            <span class="spec-label">Desktop:</span>
+                            <span class="spec-value">GNOME 47</span>
+                        </div>
+                        <div class="spec-item">
+                            <span class="spec-label">Installer:</span>
+                            <span class="spec-value">Graphical</span>
+                        </div>
+                        <div class="spec-item">
+                            <span class="spec-label">Size:</span>
+                            <span class="spec-value">9.6 GB</span>
+                        </div>
+                        <div class="spec-item">
+                            <span class="spec-label">Format:</span>
+                            <span class="spec-value">ISO</span>
+                        </div>
+                        <div class="spec-item">
+                            <span class="spec-label">Architecture:</span>
+                            <span class="spec-value">x86_64</span>
+                        </div>
+                    </div>
+                   
+                   <a href="https://drive.google.com/file/d/1rQXltVoKmUicucD08teYRtSGWYiILBQ7/view?usp=sharing" class="download-btn">
+                            <span>⬇</span> Download Standard Edition
+                   </a>
+
+                    <div class="checksum">SHA256: a03b18c503aa56cfe0dd2ecf1a95bf17b2342d31d453bc67a4d3106c06e7a41a</div>
+                </div>
+            </div>
+            
+            <div class="system-requirements">
+                <h3>System Requirements</h3>
+                <div class="req-grid">
+                    <div class="req-item">
+                        <strong>Processor:</strong> 64-bit dual-core 2.0 GHz or faster
+                    </div>
+                    <div class="req-item">
+                        <strong>Memory:</strong> 4 GB RAM minimum (8 GB recommended)
+                    </div>
+                    <div class="req-item">
+                        <strong>Storage:</strong> 25 GB available space
+                    </div>
+                    <div class="req-item">
+                        <strong>Graphics:</strong> GPU with 512 MB VRAM (GNOME requires OpenGL 3.3+)
+                    </div>
+                </div>
+            </div>
+            
+            <div class="tech-foundation">
+                <h3>Built on Solid Foundations</h3>
+                <div class="tech-grid">
+                    <div class="tech-item">
+                        <div class="tech-logo">🏔️</div>
+                        <h4>Arch Linux</h4>
+                        <p>Rolling release model with bleeding-edge packages. Access to official repositories and the massive Arch User Repository (AUR).</p>
+                    </div>
+                    <div class="tech-item">
+                        <div class="tech-logo">🖥️</div>
+                        <h4>GNOME 47</h4>
+                        <p>Modern, clean desktop environment with excellent Wayland support, touchpad gestures, and a polished user experience.</p>
+                    </div>
+                    <div class="tech-item">
+                        <div class="tech-logo">⚙️</div>
+                        <h4>Custom Kernel</h4>
+                        <p>Performance-tuned Linux kernel with optimizations for desktop use, gaming, and low-latency audio production.</p>
+                    </div>
+                    <div class="tech-item">
+                        <div class="tech-logo">📦</div>
+                        <h4>Pacman + AUR</h4>
+                        <p>Powerful package management with pacman, plus instant access to 85,000+ AUR packages through the pre-installed yay helper.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- Footer -->
+        <footer>
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>Resources</h4>
+                    <ul>
+                        <li><a href="#download">Download</a></li>
+                        <li><a href="https://ltnproject.github.io/LtnOSDoc">Documentation</a></li>
+                        <li><a href="#support">Support</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Developer</h4>
+                    <ul>
+                        <li><a href="https://ltnproject.github.io/LtnOSDoc/">GitHub</a></li>
+                        <li><a href="https://www.youtube.com/@LtnRBLX">Youtube</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>About</h4>
+                    <ul>
+                        <li><a href="https://ltnproject.github.io/LtnOSDoc/">About LtnOS</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Legal</h4>
+                    <ul>
+                        <li><a href="https://github.com/ltnproject/LtnOS/blob/main/LICENSE">License (MIT)</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 LtnOS Project. Licensed under MIT. All trademarks are property of their respective owners.</p>
+            </div>
+        </footer>
+    </div>
+</body>
+</html>
