@@ -173,57 +173,13 @@ Access the Arch User Repository (AUR) using helpers like `yay` or `paru`:
 yay -S aur-package-name
 ```
 
-## Configuration
-
-LtnOS configuration files are located in:
-
-- System-wide: `/etc/`
-- User-specific: `~/.config/`
-- GNOME settings: `dconf-editor` or GNOME Settings application
-- GNOME extensions: `~/.local/share/gnome-shell/extensions/`
-
-### GNOME Customization
-
-Install GNOME Tweaks for additional customization options:
-
-```bash
-sudo pacman -S gnome-tweaks
-```
-
-## Building from Source
-
-If you want to build LtnOS yourself:
-
-### Prerequisites
-```bash
-sudo pacman -S archiso git
-```
-
-### Build Process
-```bash
-# Clone the repository
-git clone https://github.com/yourusername/ltnos.git
-cd ltnos
-
-# Run the build script
-./scripts/build.sh
-```
-
-The ISO will be created in the `out/` directory with the following features:
-- Custom GRUB theme with logo
-- Plymouth boot splash
-- GNOME Desktop pre-configured
-- All 150+ applications included
-
-Build output: `ltnos-1.0.0-nebula-x86_64.iso`
 
 ## Documentation
 
 For more detailed information, please refer to:
 
 - [Arch Linux Wiki](https://wiki.archlinux.org/)
-- [LtnOS Documentation](link-to-your-docs) *(if applicable)*
-
+- [LtnOS Documentation](https://ltnproject.github.io/LtnOSDoc) 
 ## Contributing
 
 Contributions are welcome! If you'd like to contribute to LtnOS:
