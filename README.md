@@ -52,6 +52,8 @@ LtnOS is a polished operating system built on top of Arch Linux, combining the p
    ```
    Replace `/dev/sdX` with your USB device (use `lsblk` to identify)
 
+   If you are in windows just use rufus and flash it :D
+
 3. Boot from the USB drive
    - You'll see the custom GRUB theme with LtnOS branding
 
